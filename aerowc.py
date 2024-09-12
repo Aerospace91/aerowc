@@ -1,47 +1,40 @@
 import argparse
+import sys
 
 def main():
     """Entry point"""
+
     args = parse_args()
+
+    """TODO: Implement Handling Input Pipe"""
+    
+
     if args.c:
-        with open (args.c, 'rb') as f:
-            print(len(f.read()))
+        string = byte_count(args.c)
+        filed = args.c
+
     if args.l:
-        with open (args.l, 'r') as f:
-            count = 0
-            for line in f.readlines():
-                count += 1
-            print(count)
+        string = line_count(args.l)
+        filed = args.l
+
     if args.w:
-        with open (args.w, 'r') as f:
-            count = 0
-            for line in f.readlines():
-                count += len(line.split())
-            print(count)
+        string = word_count(args.w)
+        filed = args.w
+
     if args.m:
-        with open (args.m, 'r', encoding='utf-8') as f:
-            count = 0
-            for line in f:
-                count += len(line)
-                count += 1
-            print(count)
+        string = char_count(args.m)
+        filed = args.m
+
     if args.file:
         string = ""
-        length = 0
-        word = 0
-        byte = 0
-        with open(args.file, 'r') as f:
-            count = 0
-            count2 = 0
-            for line in f.readlines():
-                count += 1
-                count2 += len(line.split())
-            length = count
-            word = count2
-        with open(args.file, 'rb') as f:
-            byte = len(f.read())
-        string = f'{length:7}{word:8}{byte:8} {args.file}'
-        print(string)
+        length = line_count(args.file)
+        word = word_count(args.file)
+        byte = byte_count(args.file)
+        
+        string = f'{length:7}{word:8}{byte:8}'
+        filed = args.file
+        
+    print(f'{string} {filed}')
         
 
 def parse_args():
@@ -60,6 +53,32 @@ def parse_args():
     args = parser.parse_args()
 
     return args
+
+def byte_count(file):
+    with open (file, 'rb') as f:
+        return len(f.read())
+
+def line_count(file):
+    with open (file, 'r') as f:
+        count = 0
+        for line in f.readlines():
+            count += 1
+        return count
+
+def word_count(file):
+    with open (file, 'r') as f:
+        count = 0
+        for line in f.readlines():
+            count += len(line.split())
+        return count
+
+def char_count(file):
+    with open (file, 'r', encoding='utf-8') as f:
+        count = 0
+        for line in f:
+            count += len(line)
+            count += 1
+        return count
 
 
 if __name__ == "__main__":
