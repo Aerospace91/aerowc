@@ -6,31 +6,41 @@ def main():
 
     args = parse_args()
 
-    """TODO: Implement Handling Input Pipe"""
+    #Check if input is being piped
+    if not sys.stdin.isatty():
+        #If input is piped, read from stdin
+        content = sys.stdin.read()
+        binary_content = content.encode('utf-8') #Convert to bytes
+        filename = "(stdin)"
 
-    if args.file:
+    elif args.file:
+        #If a file is provided, read from file.
         content = read_file(args.file)
         binary_content = read_binary_file(args.file)
-        result = {
-            'length': line_count(content),
-            'words': word_count(content),
-            'bytes': byte_count(binary_content),
-            'chars': char_count(content)
-        }
-
-        if args.c:
-            print(f'{byte_count(content):7 {args.file}}')
-        elif args.l:
-            print(f'{result["length"]:7} {args.file}')
-        elif args.w:
-            print(f'{result["words"]:7} {args.file}')
-        elif args.m:
-            print(f'{result["chars"]:7} {args.file}')
-        else:
-            print(f'{result["length"]:7}{result["words"]:8}{result["bytes"]:8} {args.file}')
+        filename = args.file
 
     else:
-        print("No File Provided")
+        print("No File or piped input provided.")
+        return
+
+
+    result = {
+        'length': line_count(content),
+        'words': word_count(content),
+        'bytes': byte_count(binary_content),
+        'chars': char_count(content)
+    }
+
+    if args.c:
+        print(f'{byte_count(content):7 {args.file}}')
+    elif args.l:
+        print(f'{result["length"]:7} {args.file}')
+    elif args.w:
+        print(f'{result["words"]:7} {args.file}')
+    elif args.m:
+        print(f'{result["chars"]:7} {args.file}')
+    else:
+        print(f'{result["length"]:7}{result["words"]:8}{result["bytes"]:8} {args.file}')
 
         
 
