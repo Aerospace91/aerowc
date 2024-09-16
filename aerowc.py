@@ -7,34 +7,31 @@ def main():
     args = parse_args()
 
     """TODO: Implement Handling Input Pipe"""
-    
-
-    if args.c:
-        string = byte_count(args.c)
-        filed = args.c
-
-    if args.l:
-        string = line_count(args.l)
-        filed = args.l
-
-    if args.w:
-        string = word_count(args.w)
-        filed = args.w
-
-    if args.m:
-        string = char_count(args.m)
-        filed = args.m
 
     if args.file:
-        string = ""
-        length = line_count(args.file)
-        word = word_count(args.file)
-        byte = byte_count(args.file)
-        
-        string = f'{length:7}{word:8}{byte:8}'
-        filed = args.file
-        
-    print(f'{string} {filed}')
+        content = read_file(args.file)
+        binary_content = read_binary_file(args.file)
+        result = {
+            'length': line_count(content),
+            'words': word_count(content),
+            'bytes': byte_count(binary_content),
+            'chars': char_count(content)
+        }
+
+        if args.c:
+            print(f'{byte_count(content):7 {args.file}}')
+        elif args.l:
+            print(f'{result["length"]:7} {args.file}')
+        elif args.w:
+            print(f'{result["words"]:7} {args.file}')
+        elif args.m:
+            print(f'{result["chars"]:7} {args.file}')
+        else:
+            print(f'{result["length"]:7}{result["words"]:8}{result["bytes"]:8} {args.file}')
+
+    else:
+        print("No File Provided")
+
         
 
 def parse_args():
@@ -44,41 +41,35 @@ def parse_args():
         epilog='Have a nice day!'
     )
 
-    c_parser = parser.add_argument('-c', type=str, help='Return Byte Count of File')
-    l_parser = parser.add_argument('-l', type=str, help='Return Line Count of File')
-    w_parser = parser.add_argument('-w', type=str, help='Return Word Count of File')
-    m_parser = parser.add_argument('-m', type=str, help='Return Character Count of File')
-    file_parser = parser.add_argument('file', type=str, nargs='?', help='File to process')
+    parser.add_argument('-c', action='store_true', help='Return Byte Count of File')
+    parser.add_argument('-l', action='store_true', help='Return Line Count of File')
+    parser.add_argument('-w', action='store_true', help='Return Word Count of File')
+    parser.add_argument('-m', action='store_true', help='Return Character Count of File')
+    parser.add_argument('file', type=str, nargs='?', help='File to process')
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    return args
 
-def byte_count(file):
-    with open (file, 'rb') as f:
-        return len(f.read())
+def read_file(file):
+    """Read the entire content of the file"""
+    with open(file, 'r', encoding='utf-8') as f:
+        return f.read()
 
-def line_count(file):
-    with open (file, 'r') as f:
-        count = 0
-        for line in f.readlines():
-            count += 1
-        return count
+def read_binary_file(file):
+    with open(file, 'rb') as f:
+        return f.read()
 
-def word_count(file):
-    with open (file, 'r') as f:
-        count = 0
-        for line in f.readlines():
-            count += len(line.split())
-        return count
+def byte_count(binary_content):
+    return len(binary_content)
 
-def char_count(file):
-    with open (file, 'r', encoding='utf-8') as f:
-        count = 0
-        for line in f:
-            count += len(line)
-            count += 1
-        return count
+def line_count(content):
+    return content.count('\n')
+
+def word_count(content):
+    return len(content.split())
+
+def char_count(content):
+    return len(content)
 
 
 if __name__ == "__main__":
